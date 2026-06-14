@@ -6,8 +6,8 @@ Six-page static site, GitHub Pages ready. Lead form writes to Supabase; Resend s
 - index.html — home, hero + lead form
 - about.html — story/philosophy (most placeholder copy to personalize)
 - programs.html — daily rhythm, ages, enrollment
-- nature-preschool-tyler-tx.html — SEO landing page (~520 words draft)
-- montessori-inspired-preschool-tyler-tx.html — SEO landing page (~540 words draft, includes natural Reggio mentions)
+- nature-school-tyler-tx.html — SEO landing page (~520 words draft)
+- reggio-inspired-school-tyler-tx.html — SEO landing page (~540 words draft, includes natural Reggio mentions)
 - contact.html — tour request form
 - styles.css / script.js — shared
 - sitemap.xml / robots.txt
@@ -91,5 +91,5 @@ New repo (suggest: `findingplace-website`), push these files to main, enable Git
 
 ## SEO after launch
 - Submit sitemap in Google Search Console
-- Create a Google Business Profile (this matters as much as the website for "preschool near me" searches)
+- Create a Google Business Profile (this matters as much as the website for "school near me" searches)
 - Keep each landing page's copy genuine and 400+ words — already drafted to that spec
