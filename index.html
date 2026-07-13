@@ -29,6 +29,22 @@
   "areaServed": "Tyler, Texas"
 }
 </script>
+<style>
+  .hero {
+    background: linear-gradient(rgba(34,52,36,0.42), rgba(26,42,28,0.58)), url('header.png') center 42%/cover;
+    min-height: calc(100vh - 66px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .hero .hero-kicker { color: #d7e7d7; }
+  .hero h1 { color: #e9f2e8; text-shadow: 0 2px 14px rgba(15,28,16,0.55); }
+  .hero h1 em { color: #bfdcbf; }
+  .hero p.lede { color: #e0ece0; text-shadow: 0 1px 10px rgba(15,28,16,0.5); }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .hero-cta .btn-outline { margin-left: 0; }
+</style>
 </head>
 <body>
 
@@ -47,12 +63,14 @@
   </div>
 </nav>
 
-<header class="hero" style="background:linear-gradient(rgba(250,247,242,0.82), rgba(250,247,242,0.70)), url('header.png') center 42%/cover;">
+<header class="hero">
   <div class="hero-kicker">A Micro School in Tyler, Texas</div>
   <h1>Where childhood is <em>honored</em> and learning comes naturally.</h1>
   <p class="lede">The Finding Place is a small, nature-based, Reggio-inspired school where children learn through curiosity, the outdoors, and the warmth of a home-like classroom.</p>
-  <a href="contact.html" class="btn btn-primary">Schedule a Tour</a>
-  <a href="about.html" class="btn btn-outline">Our Story</a>
+  <div class="hero-cta">
+    <a href="contact.html" class="btn btn-primary">Schedule a Tour</a>
+    <a href="about.html" class="btn btn-outline">Our Story</a>
+  </div>
 </header>
 
 <section class="section">
