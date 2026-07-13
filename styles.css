@@ -397,3 +397,19 @@ img { max-width: 100%; display: block; }
   .section { padding: 52px 0; }
   .btn-outline { margin-left: 0; margin-top: 10px; }
 }
+
+.photo-ph {
+  background: repeating-linear-gradient(45deg, var(--sage-mist), var(--sage-mist) 12px, #e6efe6 12px, #e6efe6 24px);
+  border: 1.5px dashed var(--sage-light);
+  border-radius: var(--radius-sm);
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sage-deep, #4a7c59);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+  text-align: center;
+}
