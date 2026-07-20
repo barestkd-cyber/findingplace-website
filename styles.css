@@ -443,13 +443,16 @@ img { max-width: 100%; display: block; }
 .tour-weeklabel { font-weight: 700; font-size: 14px; color: var(--bark); margin-bottom: 12px; }
 
 .tour-cal { display: flex; flex-direction: column; margin-bottom: 18px; }
+/* Fixed label column keeps the time buttons aligned down the list, while
+   justify-content centres the whole date+times block in the panel. */
 .tour-day {
-  display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+  display: grid; grid-template-columns: 150px auto; gap: 14px;
+  align-items: center; justify-content: center;
   padding: 10px 0; border-bottom: 1px solid var(--sage-pale);
 }
 .tour-day:last-child { border-bottom: none; }
-.tour-day__label { font-size: 13.5px; font-weight: 700; color: var(--text-soft); }
-.tour-day__slots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.tour-day__label { font-size: 13.5px; font-weight: 700; color: var(--text-soft); text-align: right; }
+.tour-day__slots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
 .tour-day__empty { font-size: 13px; color: var(--text-faint); font-style: italic; }
 
 .tour-slot {
@@ -498,8 +501,9 @@ img { max-width: 100%; display: block; }
 html.tour-open { overflow: hidden; }
 
 @media (max-width: 620px) {
-  .tour-day { grid-template-columns: 1fr; gap: 6px; }
-  .tour-day__slots { justify-content: flex-start; }
+  .tour-day { grid-template-columns: 1fr; gap: 6px; justify-content: stretch; }
+  .tour-day__label { text-align: center; }
+  .tour-day__slots { justify-content: center; }
   .tour-dialog { padding: 28px 20px; }
 }
 
