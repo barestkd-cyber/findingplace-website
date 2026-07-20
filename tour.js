@@ -251,12 +251,6 @@
       };
 
       var isTour = state.path === "tour";
-      var notes = get("notes");
-      // The leads table has no tour/program columns yet, so the choice rides
-      // along in notes. Move these to real columns when the schema catches up.
-      var prefix = isTour
-        ? "Tour requested: " + state.slot.dateText + " at " + state.slot.timeText
-        : "Interested in: " + pickedLabels().join(", ");
 
       var lead = {
         cfname: get("c_first"),
@@ -266,9 +260,16 @@
         plname: get("p_last"),
         email: get("email"),
         phone: get("phone"),
-        notes: prefix + (notes ? "\n\n" + notes : ""),
+        notes: get("notes"),
         source: isTour ? "website_tour" : "website_info"
       };
+      // Structured columns so tour requests can be sorted and filtered by date.
+      if (isTour) {
+        lead.tour_datetime = state.slot.iso;
+        lead.tour_text = state.slot.dateText + " at " + state.slot.timeText;
+      } else {
+        lead.programs = pickedLabels();
+      }
 
       if (!lead.cfname || !lead.pfname || !lead.plname || !lead.email) {
         status.textContent = "Please fill in the required fields.";
