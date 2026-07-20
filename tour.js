@@ -105,7 +105,7 @@
       var hidden = dates.length - visible.length;
 
       var html = head("Choose a tour time", "Step 1 of 2");
-      html += '<p class="tour-sub">Tours run about forty-five minutes. Children are welcome.</p>';
+      html += '<p class="tour-sub">Tours run about forty-five minutes. Please bring your children with you &mdash; they are more than welcome, and meeting them is how we know whether we&rsquo;re the right fit for your family.</p>';
       html += '<div class="tour-cal">';
       visible.forEach(function (d) {
         html += '<div class="tour-day"><div class="tour-day__label">' + esc(d.dateText) + '</div>' +
