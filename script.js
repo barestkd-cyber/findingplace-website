@@ -3,12 +3,12 @@
    Lead form -> Supabase, nav toggle
    ───────────────────────────────────────────── */
 
-/* ⚠️ SETUP: paste your Supabase project values here.
-   Supabase Dashboard -> Project Settings -> API.
-   The anon key is SAFE to expose in frontend code —
-   row level security policies control what it can do. */
-const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';      // e.g. https://xxxx.supabase.co
-const SUPABASE_ANON_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
+/* The publishable key is SAFE to expose in frontend code — row level security
+   is what protects the data. The `leads` table grants anon INSERT only and has
+   no SELECT policy, so the public can submit a lead but never read one back.
+   Never put the service_role key here. */
+const SUPABASE_URL = 'https://gyiwcrqtybvfszkckveh.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_0eWsBHipzkU3dFUdm5hvBw_L3E4C6cX';
 
 /* ── NAV TOGGLE (mobile) ── */
 function toggleNav() {
