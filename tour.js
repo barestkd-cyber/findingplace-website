@@ -1,14 +1,11 @@
 /* ─────────────────────────────────────────────
    THE FINDING PLACE — tour.js
 
-   Two separate entry points, no chooser screen:
+   Two separate entry points, each opening a modal — no chooser screen:
 
      [data-tour-open]  -> straight to the tour time picker -> details -> done
      [data-info-open]  -> programs of interest -> details -> done
 
-   Renders inline wherever [data-tour-inline] exists (home + contact) and as
-   a modal from any CTA. Each instance owns its own state, so the modal and
-   the inline copy never step on each other.
    Submits to the same Supabase `leads` table the old form used.
    ───────────────────────────────────────────── */
 (function () {
@@ -340,7 +337,6 @@
 
   /* ═════ wiring ═══════════════════════════════════════════════════════ */
   var modal, modalFlow, lastFocused;
-  var nsCount = 0;
 
   function buildModal() {
     modal = document.createElement("div");
@@ -394,13 +390,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    // Inline copies (home + contact) show the tour picker straight away.
-    document.querySelectorAll("[data-tour-inline]").forEach(function (hostEl) {
-      hostEl.innerHTML = '<div class="tour-body"></div>';
-      hostEl.__ns = "ti" + (++nsCount) + "_";
-      createFlow(hostEl, { isModal: false }).start("tour");
-    });
-
     document.addEventListener("click", function (e) {
       var tourBtn = e.target.closest("[data-tour-open]");
       if (tourBtn) { e.preventDefault(); openModal(tourBtn, "tour"); return; }
