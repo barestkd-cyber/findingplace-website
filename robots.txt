@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.thefindingplace.com/sitemap.xml
+Sitemap: https://thefinding.place/sitemap.xml
