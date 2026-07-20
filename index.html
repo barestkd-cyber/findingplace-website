@@ -69,7 +69,7 @@
   <h1>Honoring children. Inspiring curiosity. <em>Growing lifelong learners.</em></h1>
   <p class="lede">The Finding Place is a small, nature-based, Reggio-inspired school where children learn through curiosity, the outdoors, and the warmth of a home-like classroom.</p>
   <div class="hero-cta">
-    <a href="contact.html" class="btn btn-primary">Schedule a Tour</a>
+    <a href="contact.html" class="btn btn-primary" data-tour-open>Schedule a Tour</a>
     <a href="about.html" class="btn btn-outline">Our Story</a>
   </div>
 </header>
@@ -120,30 +120,12 @@
 <section class="section" id="tour">
   <div class="container">
     <div class="lead-form-wrap">
-      <h2>Come See For Yourself 🌿</h2>
-      <p class="form-sub">Tell us a little about your family and we'll reach out to schedule a tour.</p>
-      <form id="lead-form-home" onsubmit="submitLead(event, 'lead-form-home')">
-        <div class="form-row">
-          <div class="form-group"><label>Child's First Name *</label><input type="text" name="child_first" required></div>
-          <div class="form-group"><label>Child's Last Name</label><input type="text" name="child_last"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Child's Age</label><input type="number" name="child_age" min="1" max="6"></div>
-          <div class="form-group"><label>Phone Number</label><input type="tel" name="phone"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Parent First Name *</label><input type="text" name="parent_first" required></div>
-          <div class="form-group"><label>Parent Last Name *</label><input type="text" name="parent_last" required></div>
-        </div>
-        <div class="form-row single">
-          <div class="form-group"><label>Email Address *</label><input type="email" name="email" required></div>
-        </div>
-        <div class="form-row single">
-          <div class="form-group"><label>Anything you'd like us to know?</label><textarea name="notes" placeholder="Questions, schedule needs, how you heard about us..."></textarea></div>
-        </div>
-        <button type="submit" class="form-submit">Request a Tour</button>
-        <div class="form-status"></div>
-      </form>
+      <div data-tour-inline>
+        <noscript>
+          <h2>Come See For Yourself 🌿</h2>
+          <p class="form-sub">Give us a call at <a href="tel:903-570-8341">903-570-8341</a> and we'll set up a time for your family to visit.</p>
+        </noscript>
+      </div>
     </div>
   </div>
 </section>
@@ -175,6 +157,7 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="tour.js"></script>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
