@@ -105,7 +105,7 @@
       var hidden = dates.length - visible.length;
 
       var html = head("Choose a tour time", "Step 1 of 2");
-      html += '<p class="tour-sub">Tours run about forty-five minutes. Please bring your children with you &mdash; they are more than welcome, and meeting them is how we know whether we&rsquo;re the right fit for your family.</p>';
+      html += '<p class="tour-sub">We&rsquo;ll reach out with directions and any additional tour info you&rsquo;ll need.</p>';
       html += '<div class="tour-cal">';
       visible.forEach(function (d) {
         html += '<div class="tour-day"><div class="tour-day__label">' + esc(d.dateText) + '</div>' +
@@ -315,6 +315,7 @@
       if (isTour) {
         html += '<p class="tour-sub">Thanks, ' + esc(lead.pfname) + '. We&rsquo;ll confirm <strong>' +
                 esc(state.slot.dateText) + '</strong> at <strong>' + esc(state.slot.timeText) + '</strong> shortly. \u{1F33F}</p>';
+        html += '<p class="tour-note">Please bring your children with you &mdash; meeting them is part of how we know we&rsquo;re the right fit.</p>';
       } else {
         html += '<p class="tour-sub">Thanks, ' + esc(lead.pfname) + '. We&rsquo;ll send along what you asked about within a day or two. \u{1F33F}</p>';
       }
