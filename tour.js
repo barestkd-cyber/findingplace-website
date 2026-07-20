@@ -1,13 +1,14 @@
 /* ─────────────────────────────────────────────
    THE FINDING PLACE — tour.js
-   The "Schedule a Tour" flow. Two paths:
 
-     Request a Tour  -> pick a prefilled tour time -> intake -> done
-     More Info       -> pick programs of interest  -> intake -> done
+   Two separate entry points, no chooser screen:
+
+     [data-tour-open]  -> straight to the tour time picker -> details -> done
+     [data-info-open]  -> programs of interest -> details -> done
 
    Renders inline wherever [data-tour-inline] exists (home + contact) and as
-   a modal from any [data-tour-open] button. Each instance owns its own state,
-   so the modal and the inline copy never step on each other.
+   a modal from any CTA. Each instance owns its own state, so the modal and
+   the inline copy never step on each other.
    Submits to the same Supabase `leads` table the old form used.
    ───────────────────────────────────────────── */
 (function () {
@@ -80,8 +81,8 @@
     var isModal = !!opts.isModal;
     var state;
 
-    function reset() {
-      state = { path: null, picked: [], slot: null, weekOffset: 0 };
+    function reset(path) {
+      state = { path: path || "tour", picked: [], slot: null, weekOffset: 0 };
     }
 
     function setBody(html) { root.querySelector(".tour-body").innerHTML = html; }
@@ -93,36 +94,7 @@
              '<h2 class="tour-h">' + esc(title) + '</h2>';
     }
 
-    /* ---- step 1: choose a path --------------------------------------- */
-    function renderStart() {
-      reset();
-      var html = head("Come see The Finding Place");
-      html += '<p class="tour-sub">The best way to understand a day here is to stand in it.</p>';
-      html += '<div class="tour-options">';
-      html += '<button class="tour-option" type="button" data-path="tour">' +
-                '<span class="tour-option__icon" aria-hidden="true">\u{1F33F}</span>' +
-                '<span class="tour-option__text">' +
-                  '<span class="tour-option__name">Request a Tour</span>' +
-                  '<span class="tour-option__sub">Pick a time that works and we&rsquo;ll hold it for your family.</span>' +
-                '</span></button>';
-      html += '<button class="tour-option" type="button" data-path="info">' +
-                '<span class="tour-option__icon" aria-hidden="true">\u{2709}</span>' +
-                '<span class="tour-option__text">' +
-                  '<span class="tour-option__name">More Information</span>' +
-                  '<span class="tour-option__sub">Tell us what you&rsquo;re curious about and we&rsquo;ll reach out.</span>' +
-                '</span></button>';
-      html += '</div>';
-      setBody(html);
-
-      qa("[data-path]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          state.path = b.getAttribute("data-path");
-          if (state.path === "tour") renderScheduler(); else renderPrograms();
-        });
-      });
-    }
-
-    /* ---- path A: prefilled tour times -------------------------------- */
+    /* ---- tour path: prefilled tour times ----------------------------- */
     function renderScheduler() {
       var base = midnight(new Date());
       var w = state.weekOffset;
@@ -155,15 +127,15 @@
       }
       html += '</div>';
       if (!any) html += '<p class="tour-note">Nothing open this week — try the next one.</p>';
-      html += '<div class="tour-actions">' +
-                '<button class="btn btn-outline tour-back" type="button">Back</button>' +
-                '<button class="btn btn-outline tour-nextweek" type="button"' + (w >= WEEKS_OUT - 1 ? " disabled" : "") + '>Next week</button>' +
-              '</div>';
+      html += '<div class="tour-actions">';
+      if (w > 0) html += '<button class="btn btn-outline tour-prevweek" type="button">Previous week</button>';
+      html += '<button class="btn btn-outline tour-nextweek" type="button"' + (w >= WEEKS_OUT - 1 ? " disabled" : "") + '>Next week</button>';
+      html += '</div>';
       setBody(html);
 
-      q(".tour-back").addEventListener("click", function () {
+      var pw = q(".tour-prevweek");
+      if (pw) pw.addEventListener("click", function () {
         if (state.weekOffset > 0) { state.weekOffset--; renderScheduler(); }
-        else renderStart();
       });
       var nw = q(".tour-nextweek");
       if (nw) nw.addEventListener("click", function () {
@@ -181,9 +153,9 @@
       });
     }
 
-    /* ---- path B: programs of interest -------------------------------- */
+    /* ---- info path: programs of interest ----------------------------- */
     function renderPrograms() {
-      var html = head("What are you curious about?", "Step 1 of 2");
+      var html = head("What are you curious about?", "More Information");
       html += '<p class="tour-sub">Choose any that apply and we&rsquo;ll tailor what we send you.</p>';
       html += '<div class="tour-options">';
       PROGRAMS.forEach(function (p) {
@@ -197,7 +169,6 @@
       });
       html += '</div>';
       html += '<div class="tour-actions">' +
-                '<button class="btn btn-outline tour-back" type="button">Back</button>' +
                 '<button class="btn btn-primary tour-next" type="button" disabled>Continue</button>' +
               '</div>';
       setBody(html);
@@ -216,12 +187,11 @@
           refresh();
         });
       });
-      q(".tour-back").addEventListener("click", renderStart);
       q(".tour-next").addEventListener("click", renderIntake);
       refresh();
     }
 
-    /* ---- step 2: intake ---------------------------------------------- */
+    /* ---- details ----------------------------------------------------- */
     function field(name, label, required, type) {
       return '<div class="form-group"><label for="' + root.__ns + name + '">' + esc(label) +
              (required ? ' *' : '') + '</label>' +
@@ -236,7 +206,8 @@
 
     function renderIntake() {
       var isTour = state.path === "tour";
-      var html = head(isTour ? "Tell us about your family" : "Where should we reach you?", "Step 2 of 2");
+      var html = head(isTour ? "Tell us about your family" : "Where should we reach you?",
+                      isTour ? "Step 2 of 2" : "More Information");
 
       if (isTour && state.slot) {
         html += '<p class="tour-recap">Your tour: <strong>' + esc(state.slot.dateText) +
@@ -257,7 +228,7 @@
               '</div></div>';
       html += '<div class="tour-actions">' +
                 '<button class="btn btn-outline tour-back" type="button">Back</button>' +
-                '<button class="btn btn-primary tour-submit" type="submit">' + (isTour ? "Request this tour" : "Send my questions") + '</button>' +
+                '<button class="btn btn-primary tour-submit" type="submit">' + (isTour ? "Schedule this tour" : "Send my questions") + '</button>' +
               '</div>';
       html += '<div class="form-status"></div>';
       html += '</form>';
@@ -334,7 +305,7 @@
           status.textContent = "Something went wrong. Please try again or call us at " + PHONE + ".";
           status.className = "form-status err";
           btn.disabled = false;
-          btn.textContent = isTour ? "Request this tour" : "Send my questions";
+          btn.textContent = isTour ? "Schedule this tour" : "Send my questions";
         });
     }
 
@@ -342,7 +313,7 @@
       var isTour = state.path === "tour";
       var html = '<div class="tour-success">';
       html += '<div class="tour-check" aria-hidden="true">&#10003;</div>';
-      html += '<h2 class="tour-h">' + (isTour ? "Your tour is requested" : "Thank you — we'll be in touch") + '</h2>';
+      html += '<h2 class="tour-h">' + (isTour ? "Your tour is scheduled" : "Thank you — we'll be in touch") + '</h2>';
       if (isTour) {
         html += '<p class="tour-sub">Thanks, ' + esc(lead.pfname) + '. We&rsquo;ll confirm <strong>' +
                 esc(state.slot.dateText) + '</strong> at <strong>' + esc(state.slot.timeText) + '</strong> shortly. \u{1F33F}</p>';
@@ -355,11 +326,16 @@
               '</div>';
       html += '</div>';
       setBody(html);
-      q(".tour-restart").addEventListener("click", renderStart);
+      q(".tour-restart").addEventListener("click", function () { start(state.path); });
     }
 
-    reset();
-    return { start: renderStart };
+    function start(path) {
+      reset(path);
+      if (state.path === "info") renderPrograms(); else renderScheduler();
+    }
+
+    reset("tour");
+    return { start: start };
   }
 
   /* ═════ wiring ═══════════════════════════════════════════════════════ */
@@ -401,10 +377,10 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
-  function openModal(trigger) {
+  function openModal(trigger, path) {
     if (!modal) buildModal();
     lastFocused = trigger || document.activeElement;
-    modalFlow.start();
+    modalFlow.start(path);
     modal.removeAttribute("hidden");
     document.documentElement.classList.add("tour-open");
     modal.querySelector(".tour-close").focus();
@@ -418,19 +394,18 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    // Inline copies (home + contact). Each gets its own state.
+    // Inline copies (home + contact) show the tour picker straight away.
     document.querySelectorAll("[data-tour-inline]").forEach(function (hostEl) {
       hostEl.innerHTML = '<div class="tour-body"></div>';
       hostEl.__ns = "ti" + (++nsCount) + "_";
-      createFlow(hostEl, { isModal: false }).start();
+      createFlow(hostEl, { isModal: false }).start("tour");
     });
 
-    // Every CTA opens the modal, inline copy present or not.
     document.addEventListener("click", function (e) {
-      var t = e.target.closest("[data-tour-open]");
-      if (!t) return;
-      e.preventDefault();
-      openModal(t);
+      var tourBtn = e.target.closest("[data-tour-open]");
+      if (tourBtn) { e.preventDefault(); openModal(tourBtn, "tour"); return; }
+      var infoBtn = e.target.closest("[data-info-open]");
+      if (infoBtn) { e.preventDefault(); openModal(infoBtn, "info"); return; }
     });
   });
 })();
