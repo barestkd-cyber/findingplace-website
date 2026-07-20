@@ -41,6 +41,10 @@
   .hero .hero-kicker { color: #d7e7d7; }
   .hero h1 { color: #e9f2e8; text-shadow: 0 2px 14px rgba(15,28,16,0.55); }
   .hero h1 em { color: #bfdcbf; }
+  /* On desktop each phrase gets its own line; on phones it wraps naturally. */
+  @media (min-width: 801px) {
+    .hero h1 .hero-line, .hero h1 em { display: block; }
+  }
   .hero p.lede { color: #e0ece0; text-shadow: 0 1px 10px rgba(15,28,16,0.5); }
   .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
   .hero-cta .btn-outline { margin-left: 0; }
@@ -66,7 +70,7 @@
 
 <header class="hero">
   <div class="hero-kicker">A Micro School in Tyler, Texas</div>
-  <h1>Honoring children. Inspiring curiosity. <em>Growing lifelong learners.</em></h1>
+  <h1><span class="hero-line">Honoring children.</span> <span class="hero-line">Inspiring curiosity.</span> <em>Growing lifelong learners.</em></h1>
   <p class="lede">The Finding Place is a small, nature-based, Reggio-inspired school where children learn through curiosity, the outdoors, and the warmth of a home-like classroom.</p>
   <div class="hero-cta">
     <a href="contact.html" class="btn btn-primary" data-tour-open>Schedule a Tour</a>
