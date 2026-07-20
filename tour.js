@@ -11,13 +11,18 @@
 (function () {
   "use strict";
 
-  /* ⚠️ TOUR TIMES — replace with the real ones.
-     dow: 0=Sun 1=Mon 2=Tue 3=Wed 4=Thu 5=Fri 6=Sat */
-  var TOUR_PATTERN = [
-    { dow: 2, h: 9,  m: 30 },
-    { dow: 3, h: 9,  m: 30 },
-    { dow: 4, h: 13, m: 45 }
+  /* Tour dates. Add or remove entries here as the calendar changes —
+     past dates drop off on their own. Every date offers the times below. */
+  var TOUR_DATES = [
+    "2026-07-22", "2026-07-23", "2026-07-24",
+    "2026-07-27", "2026-07-29", "2026-07-30", "2026-07-31",
+    "2026-08-03", "2026-08-05", "2026-08-06", "2026-08-07",
+    "2026-08-10", "2026-08-12", "2026-08-13",
+    "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20",
+    "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27"
   ];
+  var TOUR_TIMES = [ { h: 10, m: 30 }, { h: 11, m: 30 } ];
+  var DATES_SHOWN = 6;   // dates listed before "Show more dates"
 
   /* ⚠️ PROGRAMS — confirm these labels. */
   var PROGRAMS = [
@@ -29,7 +34,6 @@
   ];
 
   var PHONE = "903-570-8341";
-  var WEEKS_OUT = 6;
   var DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -53,22 +57,23 @@
     return h12 + ":" + (m < 10 ? "0" : "") + m + " " + ap;
   }
 
-  function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
-
-  function slotsOnDate(d) {
-    var now = new Date(), out = [];
-    TOUR_PATTERN.forEach(function (t) {
-      if (t.dow !== d.getDay()) return;
-      var when = new Date(d.getFullYear(), d.getMonth(), d.getDate(), t.h, t.m);
-      if (when.getTime() <= now.getTime()) return;
-      out.push({
-        iso: when.toISOString(),
-        dateText: DOW[when.getDay()] + ", " + MON[when.getMonth()] + " " + when.getDate(),
-        timeText: fmtTime(t.h, t.m),
-        mins: t.h * 60 + t.m
+  // Tour dates still in the future, soonest first, each with its open times.
+  // A date whose times have all passed drops out on its own.
+  function upcomingDates() {
+    var now = new Date();
+    var out = [];
+    TOUR_DATES.forEach(function (ds) {
+      var p = ds.split("-");
+      var y = parseInt(p[0], 10), mo = parseInt(p[1], 10) - 1, da = parseInt(p[2], 10);
+      var label = DOW[new Date(y, mo, da).getDay()] + ", " + MON[mo] + " " + da;
+      var slots = [];
+      TOUR_TIMES.forEach(function (t) {
+        var when = new Date(y, mo, da, t.h, t.m);
+        if (when.getTime() <= now.getTime()) return;
+        slots.push({ iso: when.toISOString(), dateText: label, timeText: fmtTime(t.h, t.m) });
       });
+      if (slots.length) out.push({ dateText: label, slots: slots });
     });
-    out.sort(function (a, b) { return a.mins - b.mins; });
     return out;
   }
 
@@ -79,7 +84,7 @@
     var state;
 
     function reset(path) {
-      state = { path: path || "tour", picked: [], slot: null, weekOffset: 0 };
+      state = { path: path || "tour", picked: [], slot: null, showAll: false };
     }
 
     function setBody(html) { root.querySelector(".tour-body").innerHTML = html; }
@@ -93,50 +98,37 @@
 
     /* ---- tour path: prefilled tour times ----------------------------- */
     function renderScheduler() {
-      var base = midnight(new Date());
-      var w = state.weekOffset;
-      var start = new Date(base.getFullYear(), base.getMonth(), base.getDate() + w * 7);
-      var end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+      var dates = upcomingDates();
+      if (!dates.length) { renderNoTours(); return; }
+
+      var visible = state.showAll ? dates : dates.slice(0, DATES_SHOWN);
+      var hidden = dates.length - visible.length;
 
       var html = head("Choose a tour time", "Step 1 of 2");
       html += '<p class="tour-sub">Tours run about forty-five minutes. Children are welcome.</p>';
-      html += '<p class="tour-weeklabel">' + esc(MON[start.getMonth()] + " " + start.getDate() + " – " + MON[end.getMonth()] + " " + end.getDate()) + '</p>';
       html += '<div class="tour-cal">';
-      var any = false;
-      for (var i = 0; i < 7; i++) {
-        var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
-        if (d.getDay() === 0 || d.getDay() === 6) continue;
-        var slots = slotsOnDate(d);
-        if (slots.length) any = true;
-        html += '<div class="tour-day"><div class="tour-day__label">' +
-                esc(DOW[d.getDay()].slice(0,3) + ", " + MON[d.getMonth()] + " " + d.getDate()) +
-                '</div><div class="tour-day__slots">';
-        if (!slots.length) {
-          html += '<span class="tour-day__empty">No tours</span>';
-        } else {
-          slots.forEach(function (s) {
-            html += '<button class="tour-slot" type="button" data-iso="' + esc(s.iso) +
-                    '" data-date="' + esc(s.dateText) + '" data-time="' + esc(s.timeText) + '">' +
-                    esc(s.timeText) + '</button>';
-          });
-        }
+      visible.forEach(function (d) {
+        html += '<div class="tour-day"><div class="tour-day__label">' + esc(d.dateText) + '</div>' +
+                '<div class="tour-day__slots">';
+        d.slots.forEach(function (s) {
+          html += '<button class="tour-slot" type="button" data-iso="' + esc(s.iso) +
+                  '" data-date="' + esc(s.dateText) + '" data-time="' + esc(s.timeText) + '">' +
+                  esc(s.timeText) + '</button>';
+        });
         html += '</div></div>';
+      });
+      html += '</div>';
+      if (hidden > 0) {
+        html += '<div class="tour-actions">' +
+                  '<button class="btn btn-outline tour-more" type="button">Show ' + hidden + ' more date' + (hidden === 1 ? "" : "s") + '</button>' +
+                '</div>';
       }
-      html += '</div>';
-      if (!any) html += '<p class="tour-note">Nothing open this week — try the next one.</p>';
-      html += '<div class="tour-actions">';
-      if (w > 0) html += '<button class="btn btn-outline tour-prevweek" type="button">Previous week</button>';
-      html += '<button class="btn btn-outline tour-nextweek" type="button"' + (w >= WEEKS_OUT - 1 ? " disabled" : "") + '>Next week</button>';
-      html += '</div>';
       setBody(html);
 
-      var pw = q(".tour-prevweek");
-      if (pw) pw.addEventListener("click", function () {
-        if (state.weekOffset > 0) { state.weekOffset--; renderScheduler(); }
-      });
-      var nw = q(".tour-nextweek");
-      if (nw) nw.addEventListener("click", function () {
-        if (state.weekOffset < WEEKS_OUT - 1) { state.weekOffset++; renderScheduler(); }
+      var more = q(".tour-more");
+      if (more) more.addEventListener("click", function () {
+        state.showAll = true;
+        renderScheduler();
       });
       qa(".tour-slot").forEach(function (b) {
         b.addEventListener("click", function () {
@@ -148,6 +140,15 @@
           renderIntake();
         });
       });
+    }
+
+    // Every posted date has passed — never show an empty calendar.
+    function renderNoTours() {
+      setBody(
+        head("Let's find a time") +
+        '<p class="tour-sub">We don&rsquo;t have tour times posted at the moment. Call us at ' +
+        '<a href="tel:' + PHONE + '">' + PHONE + '</a> and we&rsquo;ll set one up for your family.</p>'
+      );
     }
 
     /* ---- info path: programs of interest ----------------------------- */
