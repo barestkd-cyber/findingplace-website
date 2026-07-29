@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
         ${row("Email", lead.email)}
         ${row("Phone", lead.phone)}
         ${row("Child", child)}
-        ${row("Child's age", lead.cage)}
+        ${row("Age by Sept 1", lead.cage)}
         ${row("Interested in", programs)}
       </table>
 

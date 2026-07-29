@@ -23,6 +23,7 @@
   ];
   var TOUR_TIMES = [ { h: 10, m: 30 }, { h: 11, m: 30 } ];
   var DATES_SHOWN = 6;   // dates listed before "Show more dates"
+  var LEAD_HOURS = 36;   // a slot must be at least this many hours out to be bookable
 
   /* ⚠️ PROGRAMS — confirm these labels. */
   var PROGRAMS = [
@@ -60,7 +61,9 @@
   // Tour dates still in the future, soonest first, each with its open times.
   // A date whose times have all passed drops out on its own.
   function upcomingDates() {
-    var now = new Date();
+    // Slots must be at least LEAD_HOURS out, so nobody can book a same-day or
+    // next-morning tour before the school has time to prepare.
+    var cutoff = new Date().getTime() + LEAD_HOURS * 60 * 60 * 1000;
     var out = [];
     TOUR_DATES.forEach(function (ds) {
       var p = ds.split("-");
@@ -69,7 +72,7 @@
       var slots = [];
       TOUR_TIMES.forEach(function (t) {
         var when = new Date(y, mo, da, t.h, t.m);
-        if (when.getTime() <= now.getTime()) return;
+        if (when.getTime() < cutoff) return;
         slots.push({ iso: when.toISOString(), dateText: label, timeText: fmtTime(t.h, t.m) });
       });
       if (slots.length) out.push({ dateText: label, slots: slots });
@@ -217,7 +220,7 @@
 
       html += '<form class="tour-form" novalidate>';
       html += '<div class="form-row">' + field("c_first", "Child's First Name", true) + field("c_last", "Child's Last Name") + '</div>';
-      html += '<div class="form-row">' + field("c_age", "Child's Age", false, "number") + field("phone", "Phone Number", false, "tel") + '</div>';
+      html += '<div class="form-row">' + field("c_age", "Child's Age by September 1", false, "number") + field("phone", "Phone Number", false, "tel") + '</div>';
       html += '<div class="form-row">' + field("p_first", "Parent First Name", true) + field("p_last", "Parent Last Name", true) + '</div>';
       html += '<div class="form-row single">' + field("email", "Email Address", true, "email") + '</div>';
       html += '<div class="form-row single"><div class="form-group">' +
