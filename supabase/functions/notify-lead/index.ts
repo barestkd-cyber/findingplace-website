@@ -97,8 +97,8 @@ Deno.serve(async (req) => {
     ? `<h1 style="margin:0 0 14px;font-size:22px;color:#3a6347;">We received your tour request 🌿</h1>
        <p style="margin:0 0 16px;font-size:15px;color:#3a3228;line-height:1.6;">Hi ${esc(firstName)}, thank you for your interest in The Finding Place! We've received your request to tour on:</p>
        <p style="margin:0 0 16px;padding:12px 16px;background:#eef4ee;border-left:4px solid #8aab8a;border-radius:0 8px 8px 0;font-size:16px;color:#3a6347;"><strong>${esc(lead.tour_text ?? "")}</strong></p>
-       <p style="margin:0 0 16px;font-size:15px;color:#3a3228;line-height:1.6;">This is a request, not a confirmed booking yet — we'll reach out personally to confirm your time and share directions and anything else you'll need.</p>
-       <p style="margin:0 0 16px;font-size:15px;color:#3a3228;line-height:1.6;"><strong>Please plan to bring your child with you.</strong> Meeting your child is an important part of the visit, so choose a time you can both attend together.</p>
+       <p style="margin:0 0 16px;font-size:15px;color:#3a3228;line-height:1.6;">This is a request, not a confirmed booking yet — we'll reach out personally by phone to confirm your time.</p>
+       <p style="margin:0 0 16px;padding:14px 16px;background:#faf3e6;border:1px solid #e7d9be;border-radius:10px;font-size:15px;color:#3a3228;line-height:1.6;"><strong>Please be ready to answer the phone before your tour.</strong> For the safety of the children and families in our care, we don't share our address or directions until we've spoken with you personally. Once we connect, we'll pass along everything you need to find us.</p>
        <p style="margin:0 0 4px;font-size:15px;color:#3a3228;line-height:1.6;">Warmly,</p>
        <p style="margin:0;font-size:15px;color:#3a3228;line-height:1.6;">Mimzy &amp; the team at The Finding Place<br><a href="tel:903-570-8341" style="color:#4a7c59;">903-570-8341</a></p>`
     : `<h1 style="margin:0 0 14px;font-size:22px;color:#3a6347;">Thanks for reaching out 🌿</h1>
