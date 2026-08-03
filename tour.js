@@ -95,7 +95,7 @@
     function qa(sel) { return root.querySelectorAll(sel); }
 
     function head(title, eyebrow) {
-      return '<p class="tour-eyebrow">' + esc(eyebrow || "Schedule a Tour") + '</p>' +
+      return '<p class="tour-eyebrow">' + esc(eyebrow || "Request a Tour") + '</p>' +
              '<h2 class="tour-h">' + esc(title) + '</h2>';
     }
 
@@ -229,7 +229,7 @@
               '</div></div>';
       html += '<div class="tour-actions">' +
                 '<button class="btn btn-outline tour-back" type="button">Back</button>' +
-                '<button class="btn btn-primary tour-submit" type="submit">' + (isTour ? "Schedule this tour" : "Send my questions") + '</button>' +
+                '<button class="btn btn-primary tour-submit" type="submit">' + (isTour ? "Request this tour" : "Send my questions") + '</button>' +
               '</div>';
       html += '<div class="form-status"></div>';
       html += '</form>';
@@ -307,7 +307,7 @@
           status.textContent = "Something went wrong. Please try again or call us at " + PHONE + ".";
           status.className = "form-status err";
           btn.disabled = false;
-          btn.textContent = isTour ? "Schedule this tour" : "Send my questions";
+          btn.textContent = isTour ? "Request this tour" : "Send my questions";
         });
     }
 
@@ -315,7 +315,7 @@
       var isTour = state.path === "tour";
       var html = '<div class="tour-success">';
       html += '<div class="tour-check" aria-hidden="true">&#10003;</div>';
-      html += '<h2 class="tour-h">' + (isTour ? "Your tour is scheduled" : "Thank you — we'll be in touch") + '</h2>';
+      html += '<h2 class="tour-h">' + (isTour ? "Your tour is requested" : "Thank you — we'll be in touch") + '</h2>';
       if (isTour) {
         html += '<p class="tour-sub">Thanks, ' + esc(lead.pfname) + '. We&rsquo;ll confirm <strong>' +
                 esc(state.slot.dateText) + '</strong> at <strong>' + esc(state.slot.timeText) + '</strong> shortly. \u{1F33F}</p>';
